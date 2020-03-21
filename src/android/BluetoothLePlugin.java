@@ -1478,11 +1478,11 @@ public class BluetoothLePlugin extends CordovaPlugin {
       autoConnect = obj.optBoolean("autoConnect", false);
     }
 
+    connections.put(device.getAddress(), connection);
+
     BluetoothGatt bluetoothGatt = device.connectGatt(cordova.getActivity().getApplicationContext(), autoConnect, bluetoothGattCallback);
 
     connection.put(keyPeripheral, bluetoothGatt);
-
-    connections.put(device.getAddress(), connection);
   }
 
   private void reconnectAction(JSONArray args, CallbackContext callbackContext) {
@@ -2779,6 +2779,15 @@ public class BluetoothLePlugin extends CordovaPlugin {
             addProperty(returnObj, keyMessage, logNotEnabled);
 
             connections = new HashMap<Object, HashMap<Object, Object>>();
+            if (scanCallbackContext != null) {
+              if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+                // Unsure why some devices return null
+                if (scanner != null) {
+                  scanner.stopScan(scanCallback);
+                }
+              }
+            }
             scanCallbackContext = null;
 
             pluginResult = new PluginResult(PluginResult.Status.OK, returnObj);

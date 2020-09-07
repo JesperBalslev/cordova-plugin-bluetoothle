@@ -57,7 +57,7 @@ import android.util.Log;
 public class BluetoothLePlugin extends CordovaPlugin {
   //Initialization related variables
   private final int REQUEST_BT_ENABLE = 59627; /*Random integer*/
-  private final int REQUEST_ACCESS_COARSE_LOCATION = 59628;
+  private final int REQUEST_ACCESS_FINE_LOCATION = 59628;
   private final int REQUEST_LOCATION_SOURCE_SETTINGS = 59629;
   private BluetoothAdapter bluetoothAdapter;
   private boolean isReceiverRegistered = false;
@@ -879,7 +879,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
   public void hasPermissionAction(CallbackContext callbackContext) {
     JSONObject returnObj = new JSONObject();
 
-    addProperty(returnObj, "hasPermission", cordova.hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION));
+    addProperty(returnObj, "hasPermission", cordova.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
 
     callbackContext.success(returnObj);
   }
@@ -894,7 +894,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
     }
 
     permissionsCallback = callbackContext;
-    cordova.requestPermission(this, REQUEST_ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION);
+    cordova.requestPermission(this, REQUEST_ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION);
   }
 
   public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
@@ -905,7 +905,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
     //Just call hasPermission again to verify
     JSONObject returnObj = new JSONObject();
 
-    addProperty(returnObj, "requestPermission", cordova.hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION));
+    addProperty(returnObj, "requestPermission", cordova.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
 
     permissionsCallback.success(returnObj);
   }
@@ -3877,6 +3877,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
 
       HashMap<Object, Object> connection = connections.get(address);
       if (connection == null) {
+        gatt.close();
         return;
       }
 
